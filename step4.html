@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet Layer Groups and Control</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .coordinate {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: white;
+        padding: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      }
+      .info-panel {
+        position: absolute;
+        top: 0;
+        right: -350px; /* Start hidden outside the viewport */
+        width: 300px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        border-left: 1px solid #ccc;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+        transition: right 0.3s ease; /* Sliding effect */
+        padding: 20px;
+      }
+      .info-panel.active {
+        right: 0; /* Slide in */
+      }
+      .info-image {
+        width: 100%; /* Responsive width */
+        height: auto; /* Maintain aspect ratio */
+        margin-bottom: 10px; /* Spacing below the image */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+      <div class="leaflet-control coordinate"></div>
+    </div>
+    <div class="leaflet-control info-panel" id="infoPanel">
+      <h3>Marker Information</h3>
+      <img id="infoImage" class="info-image" src="" alt="Marker Image" />
+      <p id="infoText">Click on a marker to see details.</p>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+      // Map initialization
+      var map = L.map("map").setView([22.2793278, 114.1628131], 13);
+
+      // Base layers
+      var streetLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          attribution: "© OpenStreetMap contributors",
+        }
+      );
+
+      var satelliteLayer = L.tileLayer(
+        "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 17,
+          attribution: "© OpenTopoMap contributors",
+        }
+      );
+
+      // Add layers to the map
+      streetLayer.addTo(map); // Default layer
+
+      // Create layer groups
+      var ITmarkerGroup = L.layerGroup().addTo(map);
+      var CommericalmarkerGroup = L.layerGroup().addTo(map);
+
+      // Array of marker locations
+      var ITmarkersData = [
+        {
+          coords: [22.357929802706558, 114.13166951186284],
+          name: "iGears Technology Ltd",
+          details:
+            "iGears provides digital services for companies and enterprises around the world since 2004. Our services include Software Development, AR/VR Technology ...",
+          image: "./img/igears.jpg",
+        },
+      ];
+
+      var CommericalmarkersData = [
+        {
+          coords: [22.331685749828214, 114.19804471409547],
+          name: "Airside Shopping Mall",
+          details: "is a large shopping mall",
+          image: "./img/Airside Shopping Mall.jpeg",
+        },
+      ];
+
+      // Layer control
+      var baseLayers = {
+        "Street Map": streetLayer,
+        "Satellite Map": satelliteLayer,
+      };
+
+      // Icons
+      var overlays = {
+        "IT Companies": ITmarkerGroup,
+        Commercial: CommericalmarkerGroup,
+      };
+
+      L.control.layers(baseLayers, overlays).addTo(map);
+
+      // Mouse movement event to display coordinates
+      map.on("mousemove", function (e) {
+        document.getElementsByClassName("coordinate")[0].innerHTML =
+          "lat: " +
+          e.latlng.lat.toFixed(5) +
+          ", lng: " +
+          e.latlng.lng.toFixed(5);
+      });
+
+      // Slidable panel logic
+      var infoPanel = document.getElementById("infoPanel");
+      var infoText = document.getElementById("infoText");
+      var infoImage = document.getElementById("infoImage");
+
+      function showInfoPanel(text, imageSrc) {
+        if (infoPanel.classList.contains("active")) {
+          infoPanel.classList.remove("active");
+        } else {
+          infoText.innerHTML = text;
+          infoPanel.classList.add("active");
+          infoImage.src = imageSrc; // Set the image source
+        }
+      }
+
+      ITmarkersData.forEach(function (markerInfo) {
+        var marker = L.marker(markerInfo.coords)
+          .bindPopup(markerInfo.name)
+          .addTo(ITmarkerGroup);
+
+        marker.on("click", function () {
+          showInfoPanel(markerInfo.name + markerInfo.details, markerInfo.image);
+        });
+      });
+
+      // Detect marker clicks for commercial markers
+      CommericalmarkersData.forEach(function (markerInfo) {
+        var marker = L.marker(markerInfo.coords)
+          .bindPopup(markerInfo.name)
+          .addTo(CommericalmarkerGroup);
+
+        marker.on("click", function () {
+          showInfoPanel(markerInfo.name + markerInfo.details, markerInfo.image);
+        });
+      });
+    </script>
+  </body>
+</html>
