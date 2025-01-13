@@ -24,22 +24,38 @@
                 attribution: "© OpenStreetMap contributors",
             }
         );
+        
+        var satelliteLayer = L.tileLayer(
+        "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 17,
+          attribution: "© OpenTopoMap contributors",
+        }
+      );
+
         streetLayer.addTo(map);
 
-        var markers = L.layerGroup().addTo(map);
+        var baseLayers = {
+            "Street Map": streetLayer,
+            "Satellite Map": satelliteLayer,
+        };
+        
+        
+        //marker groups
+        var IT_group = L.layerGroup().addTo(map);
+        var Commerical_group = L.layerGroup().addTo(map);
+
+        var overlays = {
+        "IT Companies": IT_group,
+        Commercial: Commerical_group,
+        };
+
+        L.control.layers(baseLayers, overlays).addTo(map);
     </script>
+
 
     <?php
         include("DB.php");
-        $truncate_sql = "TRUNCATE TABLE locations";
-        mysqli_query($conn, $truncate_sql);
-
-        $inject_sql = "INSERT INTO locations (name, lat, long_)
-        VALUES 
-            ('iGears Technology Ltd', 22.357929802706558, 114.13166951186284), 
-            ('Airside Shopping Mall', 22.331685749828214, 114.19804471409547)";
-
-        mysqli_query($conn, $inject_sql);
 
         $sql = "SELECT * FROM locations";
         $result = mysqli_query($conn, $sql);
@@ -47,8 +63,11 @@
         if (mysqli_num_rows($result) > 0) {
             echo "<script>";
             while ($row = mysqli_fetch_assoc($result)) {
-                // Output JavaScript to create markers
-                echo "L.marker([{$row['lat']}, {$row['long_']}]).addTo(markers).bindPopup('{$row['name']}');";
+                if ($row['category'] == 'Tech') {
+                    echo "L.marker([{$row['lat']}, {$row['long_']}]).addTo(IT_group).bindPopup('{$row['name']}');";
+                } else {
+                    echo "L.marker([{$row['lat']}, {$row['long_']}]).addTo(Commerical_group).bindPopup('{$row['name']}');";
+                }
             }
             echo "</script>";
         } else {
