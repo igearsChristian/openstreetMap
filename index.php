@@ -106,35 +106,49 @@
     </div>
 
     <div class="leaflet-control control-panel" id="controlPanel">
-      <h2>Control Panel</h2>
-      <button id="toggleButton" class="toggle-button">→</button>
-      <h3>Select a Map:</h3>
-      <form id="mapSelector">
+    <h2>Control Panel</h2>
+    <button id="toggleButton" class="toggle-button">→</button>
+
+    <h3>Select a Map:</h3>
+    <form id="mapSelector">
         <div>
-          <input
-            type="radio"
-            id="streetMap"
-            name="options"
-            value="street"
-            checked
-          />
-          <label for="streetMap">Street Map</label>
+            <input
+                type="radio"
+                id="streetMap"
+                name="options"
+                value="street"
+                checked
+            />
+            <label for="streetMap">Street Map</label>
         </div>
         <div>
-          <input
-            type="radio"
-            id="satelliteMap"
-            name="options"
-            value="satellite"
-          />
-          <label for="satelliteMap">Satellite Map</label>
+            <input
+                type="radio"
+                id="satelliteMap"
+                name="options"
+                value="satellite"
+            />
+            <label for="satelliteMap">Satellite Map</label>
         </div>
-      </form>
-    </div>
+    </form>
+
+    <h3>Select Marker Group:</h3>
+    <form id="markerSelector">
+        <div>
+            <div>
+                <input type="checkbox" id="toggleIT" checked />
+                <label for="toggleIT">Show IT companies</label>
+            </div>
+            <div>
+                <input type="checkbox" id="toggleCommerical" checked />
+                <label for="toggleCommerical">Show Commercial buildings</label>
+            </div>
+        </div>
+    </form>
+</div>
 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="logic.js"></script>
     <script>
         var map = L.map('map', {
         center: [22.31380306893066, 114.1755544938077],
@@ -192,7 +206,7 @@
         L.control.layers(baseLayers, overlays).addTo(map);
 
     </script>
-
+    <script src="logic.js"></script>
     <?php
         include("DB.php");
         // include("DB_init.php");
