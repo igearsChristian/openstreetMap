@@ -18,6 +18,7 @@ function showInfoPanel(text) {
 
 var controlPanel = document.getElementById("controlPanel");
 var toggleButton = document.getElementById("toggleButton");
+const layersControl = document.querySelector(".leaflet-control-layers");
 
 // Add an event listener to the toggle button
 toggleButton.addEventListener("click", function () {
@@ -25,6 +26,10 @@ toggleButton.addEventListener("click", function () {
   toggleButton.textContent = controlPanel.classList.contains("active")
     ? "←"
     : "→";
+
+  layersControl.style.display = controlPanel.classList.contains("active")
+    ? "block"
+    : "none";
 });
 
 function switchMapLayer() {
@@ -35,7 +40,7 @@ function switchMapLayer() {
   if (selectedLayer === "street") {
     map.removeLayer(satelliteLayer);
     map.addLayer(streetLayer);
-  } else {
+  } else if (selectedLayer === "satellite") {
     map.removeLayer(streetLayer);
     map.addLayer(satelliteLayer);
   }
@@ -45,3 +50,23 @@ function switchMapLayer() {
 document
   .getElementById("mapSelector")
   .addEventListener("change", switchMapLayer);
+
+//Marker panel logic
+function toggleMarkers() {
+  if (document.getElementById("toggleIT").checked) {
+    map.addLayer(IT_group);
+  } else {
+    map.removeLayer(IT_group);
+  }
+
+  if (document.getElementById("toggleCommerical").checked) {
+    map.addLayer(Commerical_group);
+  } else {
+    map.removeLayer(Commerical_group);
+  }
+}
+
+// Event listeners for checkboxes
+document
+  .getElementById("markerSelector")
+  .addEventListener("change", toggleMarkers);
