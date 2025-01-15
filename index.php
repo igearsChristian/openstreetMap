@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Map with Markers</title>
+    <title>Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+      :root {
+          --map-top: 12vh;
+          --control_panel-width: 200px;
+      }
 
       #map {
-        height: 90vh;
+        height: 100vh; 
         width: 100%;
         margin: 0;
         padding: 0;
-        position: absolute;
-        top: 12vh; 
+        position: fixed;
+        top: var(--map-top); 
       }
       .info-panel {
-        position: absolute;
+        position: fixed;
         top: 0;
-        right: -350px; /* Start hidden outside the viewport */
+        right: -350px; 
         width: 300px;
         height: 100%;
         background: rgba(255, 255, 255, 0.9);
@@ -35,6 +39,35 @@
         height: auto; /* Maintain aspect ratio */
         margin-bottom: 10px; /* Spacing below the image */
       }
+      .control-panel {
+          position: fixed;  /* Keep it fixed on the left side */
+          top: var(--map-top);         /* Align to the top */
+          left: 0;         /* Align to the left */
+          height: 100vh;  /* Full height of the viewport */
+          width: var(--control_panel-width);   /* Set a width for the control panel */
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+          transition: left 0.3s ease; /* Sliding effect */
+      }
+      .control-panel.active {
+        left: calc(-1.2 * var(--control_panel-width)); 
+      }
+      .toggle-button {
+          position: absolute; /* Position relative to the control panel */
+          top: calc(1.5 * var(--map-top) + var(--map-top)); 
+          right: -30px; /* Position outside the panel */
+          background-color: #c00; /* Example button color */
+          color: white;
+          border: none;
+          border-radius: 5px;
+          padding: 100px 10px;
+          cursor: pointer;
+          transition: right 0.3s ease; /* Smooth transition */
+      }
+      .leaflet-control-layers {
+          display: none; /* Hides the control */
+      }
     </style>
 </head>
 <body>
@@ -50,6 +83,7 @@
 
     <div style="display: flex; align-items: center;">
     <form action="connect.php" method="post">
+            <label for=""><strong>Add a new Marker -></strong></label>
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required />
 
@@ -70,10 +104,44 @@
         <input type="submit" value="Reset" />
         </form>
     </div>
-    
+
+    <div class="leaflet-control control-panel" id="controlPanel">
+      <h2>Control Panel</h2>
+      <button id="toggleButton" class="toggle-button">→</button>
+      <h3>Select a Map:</h3>
+      <form id="mapSelector">
+        <div>
+          <input
+            type="radio"
+            id="streetMap"
+            name="options"
+            value="street"
+            checked
+          />
+          <label for="streetMap">Street Map</label>
+        </div>
+        <div>
+          <input
+            type="radio"
+            id="satelliteMap"
+            name="options"
+            value="satellite"
+          />
+          <label for="satelliteMap">Satellite Map</label>
+        </div>
+      </form>
+    </div>
+
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="logic.js"></script>
     <script>
-        var map = L.map("map").setView([22.31380306893066, 114.1755544938077], 13);
+        var map = L.map('map', {
+        center: [22.31380306893066, 114.1755544938077],
+        zoom: 13,
+        zoomControl: false
+        })
+
         var streetLayer = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
@@ -123,28 +191,7 @@
 
         L.control.layers(baseLayers, overlays).addTo(map);
 
-              // Slidable panel logic
-      var infoPanel = document.getElementById("infoPanel");
-      var infoText = document.getElementById("infoText");
-      var infoImage = document.getElementById("infoImage");
-
-      function showInfoPanel(text) {
-        if (infoPanel.classList.contains("active")) {
-          infoPanel.classList.remove("active");
-        } else {
-          infoText.innerHTML = text;
-          if (text == "iGears Technology Ltd") {
-            infoImage.src = './img/igears.jpg';
-          }
-          else if (text == "Airside Shopping Mall") {
-            infoImage.src = './img/Airside Shopping Mall.jpeg';
-          }
-          infoPanel.classList.add("active");
-        }
-      }
-
     </script>
-
 
     <?php
         include("DB.php");
@@ -160,6 +207,7 @@
                     var marker = L.marker([{$row['lat']}, {$row['long_']}], { icon: redIcon }).addTo(IT_group).bindPopup('{$row['name']}');
                     marker.on('click', function () {
                         showInfoPanel('{$row['name']}');
+
                     });
                 ";
                 } else {
