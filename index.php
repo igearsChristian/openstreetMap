@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- bootstrap css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
       :root {
-          --map-top: 12vh;
-          --control_panel-width: 200px;
+          --map-top: 8vh;
+          --control_panel-width: 350px;
+          --control_panel-height: 100vh;
       }
 
       #map {
-        height: 100vh; 
+        height: var(--control_panel-height); 
         width: 100%;
         margin: 0;
         padding: 0;
@@ -43,7 +46,7 @@
           position: fixed;  /* Keep it fixed on the left side */
           top: var(--map-top);         /* Align to the top */
           left: 0;         /* Align to the left */
-          height: 100vh;  /* Full height of the viewport */
+          height: var(--control_panel-height);  /* Full height of the viewport */
           width: var(--control_panel-width);   /* Set a width for the control panel */
           padding: 20px;
           background-color: #fff;
@@ -51,7 +54,7 @@
           transition: left 0.3s ease; /* Sliding effect */
       }
       .control-panel.active {
-        left: calc(-1.2 * var(--control_panel-width)); 
+        left: calc(-0.98 * var(--control_panel-width)); 
       }
       .toggle-button {
           position: absolute; /* Position relative to the control panel */
@@ -81,32 +84,8 @@
       <p id="infoText">Click on a marker to see details.</p>
     </div>
 
-    <div style="display: flex; align-items: center;">
-    <form action="connect.php" method="post">
-            <label for=""><strong>Add a new Marker -></strong></label>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required />
-
-            <label for="name">Category:</label>
-            <input type="text" id="category" name="category" required />
-
-            <label for="lat">Latitude:</label>
-            <input type="text" id="lat" name="lat" required />
-
-            <label for="long">Longitude:</label>
-            <input type="text" id="long" name="long" required />
-
-            <input type="submit" value="Submit" />
-            
-        </form>
-
-    <form action="DB_init.php" method="post">
-        <input type="submit" value="Reset" />
-        </form>
-    </div>
-
     <div class="leaflet-control control-panel" id="controlPanel">
-    <h2>Control Panel</h2>
+    <h2>Control Panel</h2> </br>
     <button id="toggleButton" class="toggle-button">→</button>
 
     <h3>Select a Map:</h3>
@@ -132,7 +111,8 @@
         </div>
     </form>
 
-    <h3>Select Marker Group:</h3>
+    </br><h3>Select Marker Group:</h3>
+    <h4>Industry</h4>
     <form id="markerSelector">
         <div>
             <div>
@@ -145,7 +125,56 @@
             </div>
         </div>
     </form>
+    
+    </br>
+    <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Add new locations
+    </button> 
+    </br></br>
+    <form action="DB_init.php" method="post">
+        <input type="submit" value="Reset the map" />
+    </form>
+
+
 </div>
+
+    <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Enter a new location</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+            <form action="connect.php" method="post">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <input type="text" class="form-control" id="category" name="category" required>
+                </div>
+                <div class="mb-3">
+                    <label for="new_lat" class="form-label">Latitude</label>
+                    <input type="text" class="form-control" id="lat" name="lat" required>
+                </div>
+                <div class="mb-3">
+                    <label for="new_long" class="form-label">Longitude</label>
+                    <input type="text" class="form-control" id="long" name="long" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            </form>
+        
+        </div>
+    </div>
+    </div>
 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -241,5 +270,8 @@
         
         mysqli_close($conn);
     ?>
+
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
