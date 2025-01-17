@@ -58,7 +58,7 @@
       }
       .toggle-button {
           position: absolute; /* Position relative to the control panel */
-          top: calc(1.5 * var(--map-top) + var(--map-top)); 
+          top: calc(var(--control_panel-height) * 0.3 + var(--map-top)); 
           right: -30px; /* Position outside the panel */
           background-color: #c00; /* Example button color */
           color: white;
@@ -78,25 +78,6 @@
 ?>
 <body>
 
-<!-- <div id="header">
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"><img class="logo" src="img/igears3.png" alt="Bootstrap" width="170" height="60"/></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Interactive Map</a></li>
-                <li class="nav-item"><a class="nav-link" href="text_form.php">Database search</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-            </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
-    </div>
-</nav>
-</div> -->
     <div id="map"></div>
     <div class="leaflet-control info-panel" id="infoPanel">
       <h3>Marker Information</h3>
@@ -105,95 +86,99 @@
     </div>
 
     <div class="leaflet-control control-panel" id="controlPanel">
-    <h2>Control Panel</h2> </br>
-    <button id="toggleButton" class="toggle-button">→</button>
+        <h2>Control Panel</h2> </br>
+        <button id="toggleButton" class="toggle-button">→</button>
 
-    <h3>Select a Map:</h3>
-    <form id="mapSelector">
-        <div>
-            <input
-                type="radio"
-                id="streetMap"
-                name="options"
-                value="street"
-                checked
-            />
-            <label for="streetMap">Street Map</label>
-        </div>
-        <div>
-            <input
-                type="radio"
-                id="satelliteMap"
-                name="options"
-                value="satellite"
-            />
-            <label for="satelliteMap">Satellite Map</label>
-        </div>
-    </form>
-
-    </br><h3>Select Marker Group:</h3>
-    <h4>Industry</h4>
-    <form id="markerSelector">
-        <div>
+        <h3>Select a Map:</h3>
+        <form id="mapSelector">
             <div>
-                <input type="checkbox" id="toggleIT" checked />
-                <label for="toggleIT">Show IT companies</label>
+                <input
+                    type="radio"
+                    id="streetMap"
+                    name="options"
+                    value="street"
+                    checked
+                />
+                <label for="streetMap">Street Map</label>
             </div>
             <div>
-                <input type="checkbox" id="toggleCommerical" checked />
-                <label for="toggleCommerical">Show Commercial buildings</label>
+                <input
+                    type="radio"
+                    id="satelliteMap"
+                    name="options"
+                    value="satellite"
+                />
+                <label for="satelliteMap">Satellite Map</label>
             </div>
+        </form>
+
+        </br><h3>Select Marker Group:</h3>
+        <h4>Industry</h4>
+        <form id="markerSelector">
+            <div>
+                <div>
+                    <input type="checkbox" id="toggleIT" checked />
+                    <label for="toggleIT">Show IT companies</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="toggleCommerical" checked />
+                    <label for="toggleCommerical">Show Commercial buildings</label>
+                </div>
+            </div>
+        </form>
+        
+        </br>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Add new locations
+        </button> 
+        <br><a href="index.php?help">No ideas?</a><br>
+        <!-- ideas panel -->
+        <?php if(isset($_GET['help'])){
+            include('ideas.php');
+        }
+        ?>
+        </br></br>
+        <form action="DB_init.php" method="post">
+            <input type="submit" value="Reset the map" />
+        </form>
         </div>
-    </form>
-    
-    </br>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Add new locations
-    </button> 
-    </br></br>
-    <form action="DB_init.php" method="post">
-        <input type="submit" value="Reset the map" />
-    </form>
-
-
-</div>
 
     <!-- Modal -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Enter a new location</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        
-            <form action="connect.php" method="post">
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="category" class="form-label">Category</label>
-                    <input type="text" class="form-control" id="category" name="category" required>
-                </div>
-                <div class="mb-3">
-                    <label for="new_lat" class="form-label">Latitude</label>
-                    <input type="text" class="form-control" id="lat" name="lat" required>
-                </div>
-                <div class="mb-3">
-                    <label for="new_long" class="form-label">Longitude</label>
-                    <input type="text" class="form-control" id="long" name="long" required>
-                </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Enter a new location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
+            
+                <form action="connect.php" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category" name="category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_lat" class="form-label">Latitude</label>
+                        <input type="text" class="form-control" id="lat" name="lat" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_long" class="form-label">Longitude</label>
+                        <input type="text" class="form-control" id="long" name="long" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            
             </div>
-            </form>
-        
         </div>
-    </div>
     </div>
 
 
