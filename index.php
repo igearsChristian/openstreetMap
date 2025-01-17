@@ -124,6 +124,10 @@
                     <input type="checkbox" id="toggleCommerical" checked />
                     <label for="toggleCommerical">Show Commercial buildings</label>
                 </div>
+                <div>
+                    <input type="checkbox" id="toggleArt" checked />
+                    <label for="toggleArt">Show Artworks</label>
+                </div>
             </div>
         </form>
         
@@ -160,7 +164,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="category" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="category" name="category" required>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="Tech">Tech</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="new_lat" class="form-label">Latitude</label>
@@ -228,13 +236,22 @@
             shadowSize: [41, 41]
         });
 
+        var artIcon = new L.Icon({
+            iconUrl: './img/art_spot.png', 
+            iconSize: [36, 36],
+            shadowUrl: './img/marker-shadow.png', 
+            shadowSize: [41, 41]
+        });
+
         //marker groups
         var IT_group = L.layerGroup().addTo(map);
         var Commerical_group = L.layerGroup().addTo(map);
+        var Art_group = L.layerGroup().addTo(map);
 
         var overlays = {
         "IT Companies": IT_group,
         Commercial: Commerical_group,
+        "Art": art_group,
         };
 
         L.control.layers(baseLayers, overlays).addTo(map);
@@ -243,37 +260,7 @@
     <script src="logic.js"></script>
     <?php
         include("DB.php");
-        // include("DB_init.php");
-        $sql = "SELECT * FROM locations";
-        $result = mysqli_query($conn, $sql);
-        
-        if (mysqli_num_rows($result) > 0) {
-            echo "<script>";
-            while ($row = mysqli_fetch_assoc($result)) {
-                if ($row['category'] == 'Tech') {
-                    echo "
-                    var marker = L.marker([{$row['lat']}, {$row['long_']}], { icon: redIcon }).addTo(IT_group).bindPopup('{$row['name']}');
-                    marker.on('click', function () {
-                        showInfoPanel('{$row['name']}');
-
-                    });
-                ";
-                } else {
-                    echo "
-                    var marker = L.marker([{$row['lat']}, {$row['long_']}], { icon: blueIcon }).addTo(Commerical_group).bindPopup('{$row['name']}');
-                    marker.on('click', function () {
-                        showInfoPanel('{$row['name']}');
-                    });
-                ";
-                }
-            }
-            
-            echo "</script>";
-        } else {
-            echo "<script>console.log('Nothing found!');</script>";
-        }
-        
-        mysqli_close($conn);
+        include("display.php")
     ?>
 
     <!-- bootstrap js -->
