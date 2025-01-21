@@ -23,10 +23,10 @@
 <body>
     <div class="container " style="max-width: 2000px; margin-top: 4rem;">
         <div class="row">
-            <div class="col" style="border:1px solid red;">
+            <div class="col" style="border:0px;">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="display-6 text-center">Entries in Database:</h2>
+                    <h2 class="display-6 text-center">Current entries in Database:</h2>
                 </div>
                 <div class="card-body">
                     <table class = "table table-bordered">
@@ -35,17 +35,21 @@
                             <td>Category</td>
                             <td>Latitude</td>
                             <td>Longitude</td>
+                            <td>Image</td>
                         </tr>
                         <tr>
                         <?php 
                             while ($row = mysqli_fetch_assoc($select_result))
                             {
+                                $image=$row['image'];
                         ?>    
                         <tr>
                         <td><?php echo $row['name'];?></td>
                         <td><?php echo $row['category'];?></td>
                         <td><?php echo $row['lat'];?></td>
                         <td><?php echo $row['long_'];?></td>
+                        <td><?php echo "<img src='$image' alt='Image' style='width: 100px; height: auto;' />";?></td>
+
                         </tr>
                         <?php } ?>
                         </tr>
