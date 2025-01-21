@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <!-- bootstrap css -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    
     <style>
       :root {
-          --map-top: 7vh;
+          --map-top: 8%;
           --control_panel-width: 350px;
           --control_panel-height: 100vh;
       }
@@ -75,6 +77,7 @@
 </head>
 <?php 
     include("header.php");
+    include("DB.php");
 ?>
 <body>
 
@@ -156,7 +159,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-                <form action="connect.php" method="post">
+                <form action="connect.php" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
@@ -166,8 +169,16 @@
                         <label for="category" class="form-label">Category</label>
                         <select class="form-control" id="category" name="category" required>
                             <option value="" disabled selected>Select a category</option>
-                            <option value="Tech">Tech</option>
-                            <option value="Commercial">Commercial</option>
+                                <?php 
+                                $select_query = "Select DISTINCT category from `locations`";
+                                $result_query = mysqli_query($conn, $select_query);
+                                while($row = mysqli_fetch_assoc($result_query)){
+                                    $category_title = $row['category'];
+                                    echo "<option value='$category_title'>$category_title</option>";
+                                }
+                                ?>
+                            <!-- <option value="Tech">Tech</option>
+                            <option value="Commercial">Commercial</option> -->
                         </select>
                     </div>
                     <div class="mb-3">
@@ -178,11 +189,18 @@
                         <label for="new_long" class="form-label">Longitude</label>
                         <input type="text" class="form-control" id="long" name="long" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label"><p>Upload an image (.jpg .jpeg .png etc)</p></label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                    </div>
+                
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
+
+                
                 </form>
             
             </div>
@@ -197,6 +215,7 @@
         zoom: 13,
         zoomControl: false
         })
+
 
         var streetLayer = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -215,6 +234,7 @@
       );
 
         streetLayer.addTo(map);
+        
 
         var baseLayers = {
             "Street Map": streetLayer,
@@ -222,26 +242,21 @@
         };
         
         var redIcon = new L.Icon({
-            iconUrl: './img/spot.png',
+            iconUrl: './img/system/spot.png',
             iconSize: [31, 31], 
 
-            shadowUrl: './img/marker-shadow.png', 
-            shadowSize: [41, 41] 
         });
 
         var blueIcon = new L.Icon({
-            iconUrl: './img/spot4.png', 
-            iconSize: [31, 31],
-            shadowUrl: './img/marker-shadow.png', 
-            shadowSize: [41, 41]
+            iconUrl: './img/system/spot4.png', 
+            iconSize: [31, 31]
         });
 
         var artIcon = new L.Icon({
-            iconUrl: './img/art_spot.png', 
-            iconSize: [36, 36],
-            shadowUrl: './img/marker-shadow.png', 
-            shadowSize: [41, 41]
+            iconUrl: './img/system/art_spot.png', 
+            iconSize: [36, 36]
         });
+        
 
         //marker groups
         var IT_group = L.layerGroup().addTo(map);
@@ -259,7 +274,6 @@
     </script>
     <script src="logic.js"></script>
     <?php
-        include("DB.php");
         include("display.php")
     ?>
 
