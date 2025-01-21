@@ -2,16 +2,12 @@ var infoPanel = document.getElementById("infoPanel");
 var infoText = document.getElementById("infoText");
 var infoImage = document.getElementById("infoImage");
 
-function showInfoPanel(text) {
+function showInfoPanel(text, img) {
   if (infoPanel.classList.contains("active")) {
     infoPanel.classList.remove("active");
   } else {
     infoText.innerHTML = text;
-    if (text == "iGears Technology Ltd") {
-      infoImage.src = "./img/igears.jpg";
-    } else if (text == "Airside Shopping Mall") {
-      infoImage.src = "./img/Airside Shopping Mall.jpeg";
-    }
+    infoImage.src = img;
     infoPanel.classList.add("active");
   }
 }
